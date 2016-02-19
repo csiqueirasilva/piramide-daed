@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
+        <link rel="icon" sizes="192x192" href="highres-icon.png" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+        <title>Pirâmide DAED - Modelos</title>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap-datepicker.js"></script>
+        <script src="js/locales/bootstrap-datepicker.pt-BR-ansi.js"></script>
+        <script src="js/anglepicker.js"></script>
+        <script src="lib/on-daed-js/geral.js"></script>
+        <script src="lib/on-daed-js/vsop87.min.js"></script>
+        <script src="lib/on-daed-js/astro.js"></script>
+        <script src="js/typeahead.min.js"></script>
+        <script src="js/imagesloaded.pkg.min.js"></script>
+        <script src="js/jquery.qtip.min.js"></script>
+
+        <script src="js/three.min.js"></script>
+        <script src="js/MTLLoader.js"></script>
+        <script src="js/OBJMTLLoader.js"></script>
+        <script src="js/ColladaLoader.js"></script>
+        <script src="js/PlyLoader.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/stats.min.js"></script>
+        <script src="js/tween.min.js"></script>
+        <script src="js/ThreeHelper.js"></script>
+        <script src="lib/on-daed-js/MathHelper.js"></script>
+        <script src="lib/on-daed-js/3D.js"></script>
+
+        <script src="ead2015.js"></script>
+
+        <script src="lib/on-daed-js/3D/GraficoGlobo.js"></script>
+        <script src="lib/on-daed-js/3D/LinhasDeForcaTerra.js"></script>
+        <script src="lib/on-daed-js/3D/SistemaSolTerraLuaSimples.js"></script>
+        <script src="lib/on-daed-js/3D/NuvemMolecular.js"></script>
+        <script src="lib/on-daed-js/3D/PlacasLitosfericas.js"></script>
+
+        <script src="lib/on-daed-js/3D/AnimacaoPiramideIdle.js"></script>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet"/>
+
+        <link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css"/>
+
+        <style>
+
+            * {
+                font-family: 'Ubuntu', sans-serif;
+            }
+
+            html, body {
+                overflow: hidden;
+                margin: 0;
+                background: #000;
+            }
+
+            #load-modal {
+                background: #000;
+                color: #000;
+                text-align: center;
+                padding: 0px;
+            }
+
+            #campo-de-observacao {
+                height: 100%;
+            }
+
+            #home-btn {
+                top: 1%;
+                right: 1.5%;
+            }
+
+            .ui-astro-icon {
+                font-size: 3em;
+                position: absolute;
+            }
+
+            #navigation-btn {
+                top: 1%;
+                left: 1%;
+                width: 300px;
+            }
+
+            #text-preview {
+                width: 100%;
+                position: absolute;
+                padding: 1%;
+                bottom: 0px;
+            }
+
+            #text-preview p {
+                margin-bottom: 10px;
+            }
+
+            @media (max-width: 767px) and (min-width: 448px) {
+                body {
+                    padding-right: 0px;
+                    padding-left: 0px; 
+                }
+
+                #load-modal {
+                    margin: -20px;
+                }
+            }
+
+            @media (max-width: 447px) {
+                #load-modal {
+                    margin: -10px;
+                }
+
+                body {
+                    padding-right: 0px;
+                    padding-left: 0px; 
+                }
+
+            }
+
+            .jlink {
+                color: rgb(0, 0, 132);
+            }
+
+            .jlink:hover {
+                cursor: pointer;
+            }
+
+            #text-snippet {
+                margin-bottom: 14px;
+            }
+
+            #texts { 
+                display: none;
+            }
+
+            @media(min-width: 1099px) {
+                #texto-completo-modal .modal-dialog {
+                    width: 75%;
+                }
+            }
+
+            #mostrar-texto {
+                padding: 3px;
+                background: #000;
+                color: #FFF;
+                position: absolute;
+                left: 1%;
+                bottom: 0px;
+                font-size: 6em;
+            }
+            
+        </style>
+
+    </head>
+    <body class="piramide-cantos">
+        <noscript><h2 style="color: #ff0000">Javascript desativado! Esse site precisa de Javascript para funcionar.</h2></noscript>
+
+        <!-- LOAD -->
+        <div class='modal show' id='load-modal' tabindex='-1' role='dialog' data-backdrop="static" 
+             data-keyboard="false" aria-hidden='true' aria-labelledby='Carregando'>
+            <div class='modal-dialog hidden'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h4 class="modal-title">Carregando conteúdo (<span id='load-modal-counter'>0</span>/<span id='load-modal-counter-max'>0</span>)!</h4>
+                    </div>
+
+                    <div class='modal-body'>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="text-preview">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="text-snippet">TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO</div>
+
+                    <div class="leia-mais">
+                        <a class="jlink" data-toggle="modal" data-target="#texto-completo-modal">Leia mais...</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="texts">
+            <div data-id="LINHAS DE FORÇA - MAGNETOSFERA"><p>Parágrafo 1 sobre Linhas de força</p><p>Parágrafo 2 sobre linhas de força</p></div>
+            <div data-id="CARTA MAGNÉTICA - INTENSIDADE"><p>Parágrafo 1 sobre Carta Magnética - Intensidade</p><p>Parágrafo 2 sobre Carta Magnética - Intensidade</p></div>
+            <div data-id="DUMMY">
+                <p>Lorem ipsum dolor sit amet, vivamus blandit aliquam habitasse orci vitae, morbi nonummy lectus integer sed, pretium sed in mauris in in elit. Nunc neque vestibulum in aptent, eu dapibus donec viverra convallis nec, in venenatis lobortis tellus pede urna. Elit ultrices accumsan ligula lectus, gravida suspendisse ipsum, a neque cum ut morbi, maecenas odio lacus praesent turpis a quam. Magna vestibulum sollicitudin vestibulum. Nulla amet commodo neque optio qui, eu lectus nullam gravida mi, ad ut cras. Sit eu. Enim urna, dolore in sed nullam, orci urna impedit, vulputate integer felis molestie tellus. Lectus a fusce, maecenas semper id viverra eget congue ante, parturient malesuada voluptatem scelerisque faucibus, libero sit tincidunt hendrerit purus. Cras repellat lacus ut lectus a leo.
+                </p><p>In pellentesque faucibus, fusce proin amet lorem sapien odio quis, euismod urna blandit, sociosqu lacus at egestas. Ullamcorper justo. Tempor fusce faucibus ut aliquam. Ipsum nunc ante lorem, dapibus blandit integer amet ipsum, ut porttitor, dolor mauris quam, nec nec pellentesque nam euismod integer. Mollis sed mi ullamcorper pellentesque odio arcu. Bibendum odio scelerisque euismod suscipit odio, id amet netus eros, adipiscing wisi ac sem nunc.
+                </p><p>Lacinia amet in vel quis neque, sollicitudin nonummy vitae suspendisse molestie sed. Elit ligula sit sed non id non, nulla lectus primis non vestibulum, nunc tempor metus, nisl non risus nec. Ut risus aliquam luctus sed fermentum, pede justo. Cras vel natus tellus et dictumst, porttitor vel donec, quis gravida rutrum, wisi leo sit tellus vestibulum eleifend aliquam. Placerat et, nibh ullamcorper nec libero orci, eleifend vivamus, est nec metus quam metus quam platea, ligula magna malesuada elit aenean. Risus id suspendisse nibh ligula pellentesque, vestibulum diam, vehicula dictum nec, fringilla lorem. Nullam venenatis consequat magna sed eu, pulvinar tellus suspendisse purus, quis eu morbi duis bibendum, pede lacus dui urna lorem et neque. Tincidunt curabitur netus vitae at. Lorem purus vel feugiat, semper in turpis, erat vivamus convallis, sit fermentum in nunc commodo sed, tincidunt dolor. A neque accumsan cursus vel elit, natoque quam diam orci, sapien nam eu dui amet eu dis, nulla mi tempus mus orci voluptas enim. Nec duis quis, scelerisque duis, dui integer vel curabitur habitant natoque proin. Sit in tempus nunc, nibh sollicitudin, et at augue in augue, a dis quis fusce dolor a nulla.
+                </p><p>Dui ligula. Laoreet interdum amet placerat justo neque velit, diam ipsum tincidunt felis faucibus. Integer ea turpis, maecenas pellentesque sapien, habitasse gravida quis felis vel, feugiat ullamcorper vulputate fringilla in sollicitudin erat, vestibulum auctor proin eleifend eu. Est lacus dictumst lacinia enim vitae, orci erat ultricies vitae vel, vitae nec posuere lobortis adipiscing nulla ligula. Eu dolor qui, integer tellus fusce at montes in sit, placerat mi leo diam fringilla quis ante, est dolorem sed dignissim felis volutpat, curabitur nulla. Interdum odio tellus at rutrum nulla vitae, metus non vestibulum parturient per cras odio, sed maecenas ad et duis metus, neque potenti vitae vestibulum leo at donec, sed venenatis nunc nullam. Faucibus et bibendum sed pellentesque, rhoncus quam urna mauris ligula laoreet auctor, conubia cras elit, malesuada ridiculus pretium. Non tortor molestie nibh justo maecenas, elit sit, eget ac nulla lectus, malesuada nec praesent suspendisse hac sit. Et pellentesque nec nec tincidunt suscipit morbi.</p>
+            </div>
+        </div>
+
+        <div id="label-model" class="label-topo-direita"></div>
+
+        <div id="campo-de-observacao"></div>
+
+        <a id="home-btn" data-placement="left" href='./' data-toggle="tooltip" title="Página Inicial" class="ui-astro-tooltip ui-astro-icon hidden ui-observacao-horizontal jlink">
+            <i class="glyphicon glyphicon-home"></i>
+        </a>
+
+        <div id="navigation-btn" class="ui-astro-icon">
+            <div class="btn-group" role="group">
+                <button id="back-navigation-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+                <button id="forward-navigation-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+            </div>
+
+            <select id="navigation-select" class="form-control">
+            </select>
+        </div>
+
+        <div id="mostrar-texto" style="display: none;"><i onclick='showTxt();' data-toggle='tooltip' title='Mostrar texto' class='jlink glyphicon glyphicon-chevron-right'></i></div>
+        
+        <div class="modal fade" id="texto-completo-modal" tabindex="-1" role="dialog" aria-labelledby="Descrição" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Descrição Completa</h4>
+                    </div>
+
+                    <div class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+
+            function showTxt() {
+                $('#mostrar-texto').hide();
+                $('#text-preview').show();
+            }
+            
+            function hideTxt() {
+                $('#mostrar-texto').show();
+                $('#text-preview').hide();                
+            }
+
+            $('.ui-tooltip').tooltip();
+
+            var appLoaded = false;
+
+            var scrIncr = Math.sin(Math.PI / 4) * 2;
+            var marginFactor = 0.2070030895983522;
+            var scrFactor = 1;
+
+            var textures = [];
+            var models = [];
+            var videos = [];
+            var audios = [];
+
+            var modelosIt = -1;
+            var audiosIt = -1;
+
+            $('#load-modal').data('beforeReady', []);
+            $('#load-modal').data('texturas', textures);
+            $('#load-modal').data('modelos', models);
+            $('#load-modal').data('videos', videos);
+            $('#load-modal').data('audios', audios);
+
+            $('#load-modal').data('loadAudio', function (path, cb) {
+
+                audios[++audiosIt] = false;
+
+                (function () {
+
+                    var audioLoadIt = audiosIt;
+                    var audio = new Audio();
+                    cb(audio);
+                    audio.src = path;
+                    audios[audioLoadIt] = true;
+
+                })();
+
+            });
+
+            $('#load-modal').data('loadVideo', function (path, w, h, cb) {
+
+                $('body').append("<video muted loop style=\"display: none;\"><source src=" + path + " type=\"video/mp4\"></video>");
+
+                var video = $('video:last')[0];
+
+                video.width = w;
+                video.height = h;
+
+                function videoLoaded() {
+                    cb(this);
+                    this.loaded = true;
+                    video.removeEventListener('play', videoLoaded);
+                }
+
+                video.addEventListener('play', videoLoaded, false);
+
+                videos.push(video);
+
+                video.play();
+            });
+
+            THREE.ImageUtils.loadTextureOriginal = THREE.ImageUtils.loadTexture;
+
+            THREE.ImageUtils.loadTexture = function (path) {
+                var texture = THREE.ImageUtils.loadTextureOriginal(path);
+
+                textures.push(texture);
+
+                return texture;
+            };
+
+            $('#load-modal').data('loadPly', function (plyFile, cb) {
+
+                models[++modelosIt] = false;
+
+                (function () {
+
+                    var modelLoadId = modelosIt;
+
+                    var loader = new THREE.PLYLoader();
+
+                    loader.addEventListener('load', function (event) {
+                        var object = event.content;
+                        cb(object);
+                        models[modelLoadId] = true;
+                    });
+
+                    loader.load(plyFile);
+
+                })();
+
+            });
+
+            $('#load-modal').data('loadCollada', function (colladaFile, cb) {
+                models[++modelosIt] = false;
+
+                (function () {
+
+                    var modelLoadId = modelosIt;
+
+                    var loader = new THREE.ColladaLoader();
+
+                    loader.options.convertUpAxis = true;
+
+                    loader.load(colladaFile, function (collada) {
+                        cb(collada);
+                        models[modelLoadId] = true;
+                    });
+
+                })();
+
+            });
+
+
+            $('#load-modal').data('loadOBJMTL', function (managerName, objFile, mtlFile, cb) {
+                models[++modelosIt] = false;
+
+                (function () {
+
+                    var modelLoadId = modelosIt;
+
+                    var loader = new THREE.OBJMTLLoader(ON_DAED["3D"].createManager(managerName));
+
+                    loader.load(objFile, mtlFile, function (object) {
+                        cb(object);
+                        models[modelLoadId] = true;
+                    });
+
+                })();
+
+            });
+
+            function resizeLoadModal() {
+                var loadModal = $('#load-modal');
+                loadModal.width(window.innerWidth);
+                loadModal.height(window.innerHeight);
+            }
+
+            resizeLoadModal();
+
+            $('#load-modal .modal-dialog').hide().removeClass('hidden').fadeIn(5);
+
+            $(window).on("resize", resizeLoadModal);
+
+            $(window).trigger("resize");
+
+            var conteudoCarregado = false;
+
+            $(window).load(function () {
+                conteudoCarregado = true;
+            });
+
+            var texturasCounter = 0;
+            var texturas = $('#load-modal').data('texturas');
+            var texturasMax = texturas.length;
+            var modelosCounter = 0;
+            var modelos = $('#load-modal').data('modelos');
+            var modelosMax = modelos.length;
+            var videosCounter = 0;
+            var videos = $('#load-modal').data('videos');
+            var videosMax = videos.length;
+            var audiosCounter = 0;
+            var audios = $('#load-modal').data('audios');
+            var audiosMax = audios.length;
+
+            var loadInterval = window.setInterval(function () {
+
+                texturasMax = Math.max(texturasMax, texturas.length);
+                modelosMax = Math.max(modelosMax, modelos.length);
+                videosMax = Math.max(videosMax, videos.length);
+                audiosMax = Math.max(audiosMax, audios.length);
+
+                $('#load-modal-counter').html(texturasCounter + modelosCounter + videosCounter + audiosCounter);
+                $('#load-modal-counter-max').html(texturasMax + modelosMax + videosMax + audiosMax);
+
+                for (var i = audios.length - 1; i >= 0; i--) {
+                    if (audios[i]) {
+                        audios.splice(i, 1);
+                        audiosCounter++;
+                    }
+                }
+
+                for (var i = modelos.length - 1; i >= 0; i--) {
+                    if (modelos[i]) {
+                        modelos.splice(i, 1);
+                        modelosCounter++;
+                    }
+                }
+
+                for (var i = texturas.length - 1; i >= 0; i--) {
+                    if (texturas[i].image && texturas[i].image.complete) {
+                        texturas.splice(i, 1);
+                        texturasCounter++;
+                    }
+                }
+
+                for (var i = videos.length - 1; i >= 0; i--) {
+                    if (videos[i].loaded) {
+                        videos.splice(i, 1);
+                        videosCounter++;
+                    }
+                }
+
+                if (
+                        appLoaded && audiosCounter >= audiosMax && videosCounter >= videosMax && modelosCounter >= modelosMax && texturasCounter >= texturasMax && ON_DAED['3D'].START_RENDER !== null && conteudoCarregado === true
+
+                        ) {
+
+                    $('#load-modal-counter').html(texturasCounter + modelosCounter + videosCounter + audiosCounter);
+
+                    window.clearInterval(loadInterval);
+                    window.setTimeout(function () {
+
+                        $('.ui-astro-icon').removeClass('hidden');
+                        $('#canvas-wrapper').removeClass('hidden');
+
+                        window.setTimeout(function () {
+                            if (ON_DAED['3D'].START_RENDER instanceof Function) {
+                                ON_DAED['3D'].START_RENDER();
+                            }
+
+                            $(window).trigger('resize');
+
+                            var beforeReady = $('#load-modal').data('beforeReady');
+
+                            for (var i = 0; i < beforeReady.length; i++) {
+                                beforeReady[i]();
+                            }
+
+                            window.setTimeout(function () {
+                                $('#load-modal').fadeOut(500, function () {
+                                    $(window).off("resize", resizeLoadModal);
+                                    $(this).remove();
+                                });
+                            }, 750);
+
+                        }, 500);
+
+                    }, 500);
+                }
+            }, 100);
+
+            var element = document.getElementById('campo-de-observacao');
+
+            var animacaoIdle;
+
+            var controls;
+
+            $(window).bind('resize', function () {
+                $(element).css('height', window.innerHeight + "px");
+                $(element).css('width', window.innerWidth + "px");
+            });
+
+            $(window).trigger('resize');
+
+            ON_DAED["3D"].create(function (scene, camera) {
+                animacaoIdle = ON_DAED["3D"].AnimacaoPiramideIdle(scene, false, true);
+
+                animacaoIdle.resetY();
+
+                camera.position.z = 250;
+
+            }, function (cameraControl, renderer, scene, camera, stats, clock) {
+
+                controls.update(clock.getDelta());
+
+                renderer.render(scene, camera);
+
+                ON_DAED["3D"].update();
+                TWEEN.update();
+
+            }, element,
+                    function (camera) {
+                        controls = new THREE.OrbitControls(camera, element);
+                        controls.maxDistance = 500;
+                        controls.minDistance = 125;
+                        controls.noPan = true;
+                        return controls;
+                    });
+
+            $('#load-modal').data('beforeReady').push(function () {
+
+                var objs = animacaoIdle.getObjects();
+
+                if (objs.length > 0) {
+
+                    var navigationSelect = document.getElementById('navigation-select');
+
+                    for (var i = 0; i < objs.length; i++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = !(objs[i].t instanceof Function) ? objs[i].t : objs[i].t();
+                        option.value = i;
+                        navigationSelect.appendChild(option);
+                    }
+
+                    $(navigationSelect).change(function () {
+                        var idx = parseInt($(this).val());
+                        animacaoIdle.verModelo(idx);
+
+                        $('#forward-navigation-btn').prop('disabled', false);
+                        $('#back-navigation-btn').prop('disabled', false);
+
+                        if (idx === objs.length - 1) {
+                            $('#forward-navigation-btn').prop('disabled', true);
+                        } else if (idx === 0) {
+                            $('#back-navigation-btn').prop('disabled', true);
+                        }
+
+                        $('#text-snippet').empty();
+
+                        var title = $(navigationSelect).children('option[value="' + idx + '"]').text();
+
+                        var btnHide = "<i onclick='hideTxt();' data-toggle='tooltip' title='Esconder texto' class='jlink glyphicon glyphicon-chevron-left'></i> ";
+
+                        $('#text-snippet').append("<h3>" + btnHide + title + "</h3>");
+
+                        var data = $('*[data-id="' + title + '"]').html();
+
+                        if (!data) {
+                            data = $('*[data-id="DUMMY"]').html();
+                        }
+
+                        var snippet = $('<div></div>').append(data).find('p:first').text();
+
+                        if (snippet.length > 500) {
+                            snippet = snippet.substring(0, 499) + "...";
+                        }
+
+                        $('#text-snippet').append("<p>" + snippet + "</p>");
+
+                        var modalBody = $('#texto-completo-modal').find('.modal-body');
+                        modalBody.empty();
+                        modalBody.append("<h3>" + title + "</h3>");
+                        modalBody.append(data);
+                    });
+
+                    $('#forward-navigation-btn').click(function () {
+                        var idx = parseInt($(navigationSelect).val());
+                        $(navigationSelect).val(idx + 1);
+                        $(navigationSelect).trigger('change');
+                    });
+
+                    $('#back-navigation-btn').click(function () {
+                        var idx = parseInt($(navigationSelect).val());
+                        $(navigationSelect).val(idx - 1);
+                        $(navigationSelect).trigger('change');
+                    });
+
+                    $(navigationSelect).trigger('change');
+
+                } else {
+                    $('#forward-navigation-btn').prop('disabled', true);
+                }
+
+                $('#back-navigation-btn').prop('disabled', true);
+            });
+
+            appLoaded = true;
+
+            /*]]>*/
+
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
+        <link rel="icon" sizes="192x192" href="highres-icon.png" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+        <title>Usuários</title>
+        <script src="sockjs-0.3.4.min.js"></script>
+        <script src="stomp.js"></script>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap-datepicker.js"></script>
+        <script src="js/locales/bootstrap-datepicker.pt-BR-ansi.js"></script>
+        <script src="js/anglepicker.js"></script>
+        <script src="lib/on-daed-js/geral.js"></script>
+        <script src="lib/on-daed-js/vsop87.min.js"></script>
+        <script src="lib/on-daed-js/astro.js"></script>
+        <script src="js/typeahead.min.js"></script>
+        <script src="js/imagesloaded.pkg.min.js"></script>
+        <script src="js/jquery.qtip.min.js"></script>
+
+        <script src="js/three.min.js"></script>
+        <script src="js/MTLLoader.js"></script>
+        <script src="js/OBJMTLLoader.js"></script>
+        <script src="js/ColladaLoader.js"></script>
+        <script src="js/PlyLoader.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/stats.min.js"></script>
+        <script src="js/tween.min.js"></script>
+        <script src="js/ThreeHelper.js"></script>
+        <script src="lib/on-daed-js/MathHelper.js"></script>
+        <script src="lib/on-daed-js/3D.js"></script>
+
+        <script src="ead2015.js"></script>
+
+        <script src="lib/on-daed-js/3D/GraficoGlobo.js"></script>
+        <script src="lib/on-daed-js/3D/LinhasDeForcaTerra.js"></script>
+        <script src="lib/on-daed-js/3D/SistemaSolTerraLuaSimples.js"></script>
+        <script src="lib/on-daed-js/3D/NuvemMolecular.js"></script>
+        <script src="lib/on-daed-js/3D/PlacasLitosfericas.js"></script>
+
+        <script src="lib/on-daed-js/3D/AnimacaoPiramideIdle.js"></script>
+
+        <script type="text/javascript" src="fancybox2/jquery.fancybox.js?v=2.1.5"></script>
+        <link rel="stylesheet" type="text/css" href="fancybox2/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+        <link href="css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="css/bootstrap-responsive.css" rel="stylesheet"/>
+
+        <link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css"/>
+
+        <style>
+
+            body {
+                padding: 0;
+                margin: 0;
+                background: #FFFFFF;
+            }
+
+            #campo-de-observacao {
+                margin: 0 auto;
+            }
+
+            * {
+                font-family: 'Ubuntu', sans-serif;
+            }
+
+            html, body {
+                overflow: hidden;
+                margin: 0;
+                background: #000;
+            }
+
+            #load-modal {
+                background: #000;
+                color: #000;
+                text-align: center;
+                padding: 0px;
+            }
+
+            #campo-de-observacao {
+                height: 100%;
+            }
+
+            #home-btn {
+                top: 1%;
+                right: 1.5%;
+            }
+
+            .ui-astro-icon {
+                font-size: 3em;
+                position: absolute;
+            }
+
+            #navigation-btn {
+                top: 1%;
+                left: 1%;
+                width: 300px;
+            }
+
+            #text-preview {
+                width: 100%;
+                position: absolute;
+                padding: 1%;
+                bottom: 0px;
+            }
+
+            #text-preview p {
+                margin-bottom: 10px;
+            }
+
+            @media (max-width: 767px) and (min-width: 448px) {
+                body {
+                    padding-right: 0px;
+                    padding-left: 0px; 
+                }
+
+                #load-modal {
+                    margin: -20px;
+                }
+            }
+
+            @media (max-width: 447px) {
+                #load-modal {
+                    margin: -10px;
+                }
+
+                body {
+                    padding-right: 0px;
+                    padding-left: 0px; 
+                }
+
+            }
+
+            .jlink {
+                color: rgb(0, 0, 132);
+            }
+
+            .jlink:hover {
+                cursor: pointer;
+            }
+
+            #text-snippet {
+                margin-bottom: 14px;
+            }
+
+            #texts { 
+                display: none;
+            }
+
+            @media(min-width: 1099px) {
+                #texto-completo-modal .modal-dialog {
+                    width: 75%;
+                }
+            }
+
+            #mostrar-texto {
+                padding: 3px;
+                background: #000;
+                color: #FFF;
+                position: absolute;
+                left: 1%;
+                bottom: 0px;
+                font-size: 6em;
+            }
+
+            #src-img {
+                position: absolute; 
+                bottom: 1%; 
+                right: 1%;
+                width: 7.5vw;
+                overflow: hidden;
+            }
+
+            #src-img-tb {
+                border: 2px solid #ffffff;
+                width: 100%;
+                height: auto;
+            }
+
+            #navigation-btn select {
+                margin-top: 10px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="navigation-btn" class="ui-astro-icon">
+
+            <div class="btn-group" role="group">
+                <button id="back-navigation-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+                <button id="forward-navigation-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+
+                <span class='btn-separator'></span>
+
+                <button id="reset-camera-btn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span></button>
+            </div>
+
+            <select id="navigation-select" class="form-control">
+            </select>
+
+            <select id="time-select" class="form-control">
+            </select>
+        </div>
+
+        <a id="home-btn" data-placement="left" href='./' data-toggle="tooltip" title="Página Inicial" class="ui-astro-tooltip ui-astro-icon ui-observacao-horizontal jlink">
+            <i class="glyphicon glyphicon-home"></i>
+        </a>
+
+        <div id="campo-de-observacao"></div>
+
+        <noscript><h2 style="color: #ff0000">Javascript desativado! Esse site precisa de Javascript para funcionar.</h2></noscript>
+
+        <div id="src-img">
+            <a class="fancybox" id="src-img-link" href="_color.jpg" data-fancybox-group="gallery" title="Foto colorida"><img id="src-img-tb" src="_color.jpg" alt="" /></a>
+        </div>
+
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+
+            $('.fancybox').fancybox();
+
+            var element = document.getElementById('campo-de-observacao');
+
+            $(window).bind('resize', function () {
+                $(element).css('height', window.innerHeight + "px");
+                $(element).css('width', window.innerWidth + "px");
+            });
+
+            $(window).trigger('resize');
+
+            var mainScene = null;
+            var mainCamera = null;
+            var mainControls = null;
+            var mainWrapper = null;
+
+            function resetCamera() {
+                mainCamera.position.set(0, 0, -7.5);
+                mainControls.center.set(0, 0, 0);
+            }
+
+            function loadData() {
+
+                var imgThumbnail = document.getElementById("src-img-link");
+                var img = document.getElementById("src-img-tb");
+
+                var selecionado = $('#time-select').val();
+
+                img.src = imgThumbnail.href = selecionado + '/_color.jpg';
+
+                resetCamera();
+
+                $.getJSON(selecionado + "/_depth.json", {}, function (depthData) {
+
+                    var geo = new THREE.Geometry();
+
+                    for (var i = 0, j = 0; i < depthData.length; i = i + 3, j++) {
+                        if (depthData[i] !== 0 && depthData[i + 1] !== 0 && depthData[i + 2] !== 0) {
+
+                            var v = new THREE.Vector3(depthData[i], depthData[i + 1], depthData[i + 2]);
+                            geo.vertices.push(v);
+
+                            var color = new THREE.Color();
+
+                            color.b = Math.min(v.z / 4.5, 1);
+                            color.r = Math.min(v.z / 3, 1);
+                            color.g = Math.min(v.z / 2.15, 1);
+
+                            geo.colors.push(color);
+                        }
+                    }
+
+                    geo.verticesNeedUpdate = true;
+                    geo.colorsNeedUpdate = true;
+
+                    var points = new THREE.PointCloud(geo, new THREE.PointCloudMaterial({
+                        size: 0.3,
+                        vertexColors: THREE.VertexColors
+                    }));
+
+                    if (mainWrapper) {
+                        mainScene.remove(mainWrapper);
+                    }
+
+                    mainWrapper = new THREE.Object3D();
+                    mainWrapper.add(points);
+
+                    mainWrapper.scale.multiplyScalar(10);
+
+                    mainScene.add(mainWrapper);
+
+                    $.getJSON(selecionado + "/_skeleton.json", {}, function (skeletonData) {
+                        for (var i in skeletonData) {
+
+                            if (skeletonData[i][0] === 0 && skeletonData[i][1] === 0 && skeletonData[i][2] === 0) {
+                                //console.log(i); Joints invalidos
+                            } else {
+                                var sphere = new THREE.Mesh(new THREE.SphereGeometry(0.01, 16, 8),
+                                        new THREE.MeshBasicMaterial({depthWrite: true, depthTest: false, color: 0xFFFFFF}));
+
+                                sphere.position.set(skeletonData[i][0], skeletonData[i][1], skeletonData[i][2]);
+
+                                mainWrapper.add(sphere);
+                            }
+
+                        }
+                    });
+
+                });
+            }
+
+            ON_DAED["3D"].create(function (scene, camera) {
+
+                mainScene = scene;
+                mainCamera = camera;
+
+            }, function (cameraControl, renderer, scene, camera, stats, clock) {
+
+                if ($('.fancybox-overlay').is(':visible')) {
+                    cameraControl.enabled = false;
+                } else {
+                    cameraControl.enabled = true;
+                }
+
+                cameraControl.update();
+
+                ON_DAED["3D"].update();
+                TWEEN.update();
+
+                renderer.render(scene, camera);
+
+            },
+                    element,
+                    function (camera, renderer) {
+                        mainControls = new THREE.OrbitControls(camera, element);
+                        return mainControls;
+                    });
+
+            ON_DAED['3D'].START_RENDER();
+
+            var listaLocais = [[${listaLocais}]];
+                    for (var key in listaLocais) {
+                var local = listaLocais[key];
+                var op = document.createElement('option');
+                op.innerHTML = local;
+                op.value = key;
+                document.getElementById('navigation-select').appendChild(op);
+            }
+
+            $('#navigation-select').change(function () {
+                var val = $(this).val();
+
+                $.ajax({
+                    url: 'kinect-db',
+                    method: 'POST',
+                    data: {idLocal: val}
+                })
+
+                        .done(function (data) {
+
+                            document.getElementById('time-select').innerHTML = '';
+
+                            for (var i = 0; i < data.length; i++) {
+                                var formatted = data[i].replace(/.*\d\//g, '').replace(/-\d+$/g, '');
+
+                                var split = formatted.split('-');
+
+                                formatted = split[0] + '/' + split[1] + '/' + split[2] + ' ' + split[3] + ":" + split[4] + ":" + split[5];
+
+                                var op = document.createElement('option');
+
+                                op.order = split[2] + split[1] + split[0] + split[3] + split[4] + split[5];
+                                op.innerHTML = formatted;
+                                op.value = data[i];
+
+                                document.getElementById('time-select').appendChild(op);
+                            }
+
+                            $("#time-select").append($("#time-select option").remove().sort(function (a, b) {
+                                var at = $(a)[0].order, bt = $(b)[0].order;
+                                return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+                            }));
+
+                            $('#time-select').trigger('change');
+                        })
+
+                        .error(function () {
+                            alert("Erro ao receber dados dos usuários para o local selecionado");
+                        });
+            });
+
+            $('#forward-navigation-btn').click(function () {
+                var idx = parseInt($('#time-select').prop('selectedIndex'));
+                $('#time-select').prop('selectedIndex', idx + 1);
+                $('#time-select').trigger('change');
+            });
+
+            $('#back-navigation-btn').click(function () {
+                var idx = parseInt($('#time-select').prop('selectedIndex'));
+                $('#time-select').prop('selectedIndex', idx - 1);
+                $('#time-select').trigger('change');
+            });
+
+            $('#time-select').change(function () {
+                $('#forward-navigation-btn').prop('disabled', false);
+                $('#back-navigation-btn').prop('disabled', false);
+
+                var idx = parseInt($('#time-select').prop('selectedIndex'));
+
+                if (idx === 0) {
+                    $('#back-navigation-btn').prop('disabled', true);
+                } else if (idx === $('#time-select option').length - 1) {
+                    $('#forward-navigation-btn').prop('disabled', true);
+                }
+
+                loadData();
+            });
+
+            $('#navigation-select').trigger('change');
+
+            $('#reset-camera-btn').click(function () {
+                resetCamera();
+            });
+
+            /*]]>*/
+
+        </script>
+
+    </body>
+</html>
